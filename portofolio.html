@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learnora Academy</title>
+  <style>
+    /* --- Global Variables & Reset --- */
+    :root {
+      --primary-color: #004aad;
+      --primary-dark: #002f6c;
+      --secondary-color: #ffcb05;
+      --text-light: #ffffff;
+      --text-dark: #333;
+      --bg-light: #f8f9fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+    }
+
+    /* --- Base Styles (Mobile First) --- */
+
+    /* ===== HEADER ===== */
+    header {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative; /* For mobile menu positioning */
+    }
+    header h1 {
+      font-size: 22px;
+      color: var(--secondary-color);
+    }
+    /* Hamburger Menu Icon */
+    .menu-toggle {
+      display: block;
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-light);
+    }
+
+    /* Navigation Menu (Hidden on Mobile) */
+    nav {
+      display: none; /* Hidden by default */
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: var(--primary-dark);
+      flex-direction: column;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    /* This class is added by JavaScript */
+    nav.nav-open {
+      display: flex;
+    }
+
+    nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 12px;
+      display: block;
+    }
+
+    nav a:hover {
+      background-color: var(--primary-color);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      background: linear-gradient(to right, #004aad, #002f6c);
+      color: var(--text-light);
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .hero h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .hero button {
+      background-color: var(--secondary-color);
+      border: none;
+      padding: 12px 25px;
+      color: var(--primary-dark);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .hero button:hover {
+      background-color: #ffd84c;
+    }
+
+    /* ===== CONTENT SECTIONS ===== */
+    .section {
+      padding: 50px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .section h3 {
+      text-align: center;
+      font-size: 26px;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+    }
+
+    /* Courses (1 column on mobile) */
+    .courses {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .course {
+      background: var(--text-light);
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .course:hover {
+      transform: translateY(-5px);
+    }
+
+    .course img {
+      width: 100%;
+      border-radius: 8px;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .course h4 {
+      margin: 12px 0;
+      color: var(--primary-color);
+    }
+
+    /* ===== ABOUT ===== */
+    .about p {
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    /* ===== CONTACT ===== */
+    .contact form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .contact input,
+    .contact textarea {
+      padding: 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .contact button {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .contact button:hover {
+      background-color: #003a87;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background-color: var(--primary-dark);
+      color: var(--text-light);
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      font-size: 14px;
+    }
+
+    /* ===== RESPONSIVE - TABLET ===== */
+    @media (min-width: 768px) {
+      header {
+        padding: 15px 30px;
+      }
+      
+      .menu-toggle {
+        display: none; /* Hide hamburger menu */
+      }
+      
+      nav {
+        display: flex; /* Show nav links */
+        position: static;
+        flex-direction: row;
+        width: auto;
+        background-color: transparent;
+        padding: 0;
+        gap: 15px;
+      }
+      
+      nav a {
+        padding: 5px;
+      }
+      
+      nav a:hover {
+        background-color: transparent;
+        text-decoration: underline;
+      }
+
+      .hero {
+        padding: 100px 20px;
+      }
+
+      .hero h2 {
+        font-size: 36px;
+      }
+      
+      .hero p {
+        font-size: 18px;
+      }
+
+      .courses {
+        /* 2 columns for tablets */
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .about p {
+        font-size: 17px;
+      }
+    }
+
+    /* ===== RESPONSIVE - DESKTOP ===== */
+    @media (min-width: 1024px) {
+      header {
+        padding: 15px 50px;
+      }
+
+      .hero h2 {
+        font-size: 42px;
+      }
+
+      .section {
+        padding: 60px 20px;
+      }
+      
+      .courses {
+        /* 3 columns for desktop */
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Abba Junior Tech Academy</h1>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+    
+    <nav id="nav-menu">
+      <a href="#home">Home</a>
+      <a href="#courses">Courses</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="home">
+    <h2>Welcome to Abba Junior Tech Academy</h2>
+    <p>Empowering students with digital skills for a brighter future.</p>
+    <button onclick="scrollToSection('courses')">Explore Courses</button>
+  </section>
+
+  <section class="section" id="courses">
+    <h3>Our Popular Courses</h3>
+    <div class="courses">
+      <div class="course">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY__yrWQI-ukL1th9tgXvzVMkQoUfsP0ALkA&s" alt="Web Development" />
+        <h4>Web Development</h4>
+        <p>Learn HTML, CSS, and JavaScript to build amazing websites.</p>
+      </div>
+      <div class="course">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYJUFLbkv8Cac9_6np8K-J-KXyYwDCpr7Q5Q&s" alt="Web Design" />
+        <h4>Web Design</h4>
+        <p>Master Python, analytics, and AI to become data-driven.</p>
+        </div>
+        <div class="course">
+        <img src="data:image/jpeg;base64,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" alt="UI/UX Design" />
+        <h4>UI/UX Design</h4>
+        <p>Create engaging, user-friendly digital experiences.</p>
+      </div>
+       <div class="course">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMxBGEMIw6qRKbVQAUnbkJVCWEVSFLYNcqEQ&s" alt="Basics of HTML, CSS, Javascript">
+        <h4>Basic of HTML, CSS, JavaScript</h4>
+       </div>
+    </div>
+  </section>
+
+  <section class="section about" id="about">
+    <h3>About Us</h3>
+    <p>
+      AbbaJunior Tech Academy is a modern learning platform providing practical education in
+      technology, design, and innovation — helping students grow into digital professionals.
+    </p>
+  </section>
+
+  <section class="section contact" id="contact">
+    <h3>Contact Us</h3>
+    <form onsubmit="sendMessage(event)">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
+      <textarea id="message" rows="5" placeholder="Your Message..." required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 Abba Junior Tech Academy | Designed by Abba Yau</p>
+  </footer>
+
+  <script>
+    // --- JavaScript for Hamburger Menu ---
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('nav-open');
+    });
+
+    // --- Your Existing JavaScript ---
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value;
+      // Use a custom modal here instead of alert for a better UI
+      alert(`Thank you ${name}! Your message has been received.`);
+      event.target.reset(); // Reset the form
+    }
+  </script>
+</body>
+</html>
