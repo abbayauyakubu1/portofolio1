@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        :root {
+            --yt-black: #0f0f0f;
+            --yt-white: #ffffff;
+            --yt-gray: #aaaaaa;
+            --yt-border: #3f3f3f;
+            --yt-hover: #272727;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--yt-black);
+            color: var(--yt-white);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #717171;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aaaaaa;
+        }
+
+        /* Sidebar Toggling Logic */
+        #sidebar.collapsed {
+            width: 72px;
+        }
+        #sidebar.collapsed span, 
+        #sidebar.collapsed .sidebar-section-title {
+            display: none;
+        }
+        #sidebar.collapsed .sidebar-item {
+            flex-direction: column;
+            justify-content: center;
+            padding: 16px 0;
+            gap: 4px;
+        }
+        #sidebar.collapsed .sidebar-item i {
+            font-size: 20px;
+            margin-right: 0;
+        }
+        #sidebar.collapsed .sidebar-item p {
+            font-size: 10px;
+            margin: 0;
+        }
+
+        .video-thumbnail-container:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .category-pill {
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        /* Responsive Grid */
+        .video-grid {
+            display: grid;
+            gap: 16px;
+            padding: 16px;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 640px) {
+            .video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1024px) {
+            .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (min-width: 1536px) {
+            .video-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (min-width: 2100px) {
+            .video-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            #sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .search-bar-container {
+                display: none; /* Can be toggled with JS */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 h-14 bg-[#0f0f0f] flex items-center justify-between px-4 z-50">
+        <div class="flex items-center gap-4">
+            <button id="menu-btn" class="p-2 hover:bg-zinc-800 rounded-full hidden md:block">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center gap-1 cursor-pointer">
+                <i class="fa-brands fa-youtube text-red-600 text-3xl"></i>
+                <span class="font-bold text-xl tracking-tighter">YouTube</span>
+                <span class="text-[10px] text-zinc-400 self-start mt-1 ml-1">NG</span>
+            </div>
+        </div>
+
+        <div class="hidden md:flex flex-1 max-w-[720px] items-center gap-4 ml-10">
+            <div class="flex flex-1">
+                <div class="flex flex-1 items-center bg-[#121212] border border-zinc-800 rounded-l-full px-4 py-1.5 focus-within:border-blue-500">
+                    <i class="fa-solid fa-magnifying-glass text-zinc-400 mr-3 hidden sm:block"></i>
+                    <input type="text" placeholder="Search" class="bg-transparent outline-none w-full text-white">
+                </div>
+                <button class="bg-zinc-800 px-5 rounded-r-full border border-l-0 border-zinc-800 hover:bg-zinc-700">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+            <button class="p-2.5 bg-zinc-900 hover:bg-zinc-800 rounded-full">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-4">
+            <button class="p-2 hover:bg-zinc-800 rounded-full md:hidden">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button class="p-2 hover:bg-zinc-800 rounded-full">
+                <i class="fa-solid fa-video"></i>
+            </button>
+            <button class="p-2 hover:bg-zinc-800 rounded-full relative">
+                <i class="fa-solid fa-bell"></i>
+                <span class="absolute top-1 right-1 bg-red-600 text-[10px] px-1 rounded-full">9+</span>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-sm cursor-pointer ml-2">
+                G
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-14 bottom-0 w-60 bg-[#0f0f0f] overflow-y-auto pb-4 hidden md:block transition-all duration-200">
+        <div class="px-3 py-3 border-b border-zinc-800">
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg bg-zinc-800 cursor-pointer">
+                <i class="fa-solid fa-house text-xl w-6"></i>
+                <span class="text-sm font-medium">Home</span>
+            </div>
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg hover:bg-zinc-900 cursor-pointer">
+                <i class="fa-solid fa-bolt text-xl w-6"></i>
+                <span class="text-sm">Shorts</span>
+            </div>
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg hover:bg-zinc-900 cursor-pointer">
+                <i class="fa-solid fa-clapperboard text-xl w-6"></i>
+                <span class="text-sm">Subscriptions</span>
+            </div>
+        </div>
+        
+        <div class="px-3 py-3 border-b border-zinc-800">
+            <div class="sidebar-section-title px-3 mb-2 text-base font-bold">You ></div>
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg hover:bg-zinc-900 cursor-pointer">
+                <i class="fa-solid fa-clock-rotate-left text-xl w-6"></i>
+                <span class="text-sm">History</span>
+            </div>
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg hover:bg-zinc-900 cursor-pointer">
+                <i class="fa-solid fa-list-ul text-xl w-6"></i>
+                <span class="text-sm">Playlists</span>
+            </div>
+            <div class="sidebar-item flex items-center gap-6 p-2.5 rounded-lg hover:bg-zinc-900 cursor-pointer">
+                <i class="fa-solid fa-clock text-xl w-6"></i>
+                <span class="text-sm">Watch Later</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content md:ml-60 pt-14 transition-all duration-200">
+        
+        <!-- Categories Filter -->
+        <div class="sticky top-14 bg-[#0f0f0f] z-40 py-3 px-4 flex gap-3 overflow-x-auto no-scrollbar">
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-white text-black text-sm font-medium">All</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Gaming</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Music</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Live</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Coding</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Podcasts</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Computers</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">AI</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">News</button>
+            <button class="category-pill px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Cooking</button>
+        </div>
+
+        <!-- Video Grid -->
+        <div id="video-grid" class="video-grid">
+            <!-- Videos injected via JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        const MOCK_VIDEOS = [
+            { id: 1, title: "Modern Web Development with React and Tailwind CSS", author: "Dev Mastery", views: "1.2M", time: "2 days ago", avatar: "DM", thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80", duration: "12:45" },
+            { id: 2, title: "Lo-fi Hip Hop Radio - Beats to Relax/Study to", author: "Lofi Girl", views: "45K watching", time: "LIVE", avatar: "LG", thumbnail: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80", duration: "LIVE" },
+            { id: 3, title: "The Ultimate Guide to SpaceX's Starship Program", author: "Space Explorers", views: "890K", time: "1 month ago", avatar: "SE", thumbnail: "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=800&q=80", duration: "15:20" },
+            { id: 4, title: "Why Python is still the king of AI in 2024", author: "Code Insights", views: "250K", time: "5 hours ago", avatar: "CI", thumbnail: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80", duration: "08:12" },
+            { id: 5, title: "Beautiful Minimalist Desk Setup for Software Engineers", author: "Aesthetic Tech", views: "3.5M", time: "1 year ago", avatar: "AT", thumbnail: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80", duration: "10:00" },
+            { id: 6, title: "How I Learned to Design UI/UX in Just 30 Days", author: "Design Journey", views: "150K", time: "3 weeks ago", avatar: "DJ", thumbnail: "https://images.unsplash.com/photo-1586717791821-3f44a563cc4c?w=800&q=80", duration: "18:30" },
+            { id: 7, title: "Cooking the Perfect Italian Carbonara | Authentic Recipe", author: "Chef Mario", views: "5.1M", time: "6 months ago", avatar: "CM", thumbnail: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800&q=80", duration: "06:55" },
+            { id: 8, title: "Traveling through the Swiss Alps: 4K Cinematic", author: "World Travel", views: "2.2M", time: "2 years ago", avatar: "WT", thumbnail: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", duration: "24:00" },
+            { id: 9, title: "Understanding Quantum Computing in 5 Minutes", author: "Science Simplified", views: "670K", time: "4 days ago", avatar: "SS", thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80", duration: "05:15" },
+            { id: 10, title: "Top 10 Hidden Features in iOS 18 you didn't know", author: "Tech Reviews", views: "1.1M", time: "12 hours ago", avatar: "TR", thumbnail: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&q=80", duration: "11:22" },
+            { id: 11, title: "Backpacking across Southeast Asia for $20 a day", author: "The Nomad", views: "430K", time: "4 months ago", avatar: "TN", thumbnail: "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80", duration: "32:10" },
+            { id: 12, title: "How Pixar creates their amazing 3D animations", author: "Movie Magic", views: "8.9M", time: "3 years ago", avatar: "MM", thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80", duration: "14:40" }
+        ];
+
+        function renderVideos() {
+            const grid = document.getElementById('video-grid');
+            grid.innerHTML = MOCK_VIDEOS.map(video => `
+                <div class="cursor-pointer group">
+                    <div class="relative video-thumbnail-container aspect-video overflow-hidden rounded-xl">
+                        <img src="${video.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                            ${video.duration}
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-3">
+                        <div class="w-9 h-9 min-w-[36px] rounded-full bg-zinc-700 flex items-center justify-center text-sm font-bold">
+                            ${video.avatar}
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-sm font-bold line-clamp-2 leading-snug group-hover:text-zinc-200">${video.title}</h3>
+                            <p class="text-xs text-zinc-400 mt-1 hover:text-white transition-colors">${video.author}</p>
+                            <p class="text-xs text-zinc-400">${video.views} views • ${video.time}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Sidebar Toggle Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        menuBtn.addEventListener('click', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.style.width = '72px';
+                    mainContent.style.marginLeft = '72px';
+                } else {
+                    sidebar.style.width = '240px';
+                    mainContent.style.marginLeft = '240px';
+                }
+            }
+        });
+
+        // Initialize
+        renderVideos();
+
+        // Responsive Sidebar Adjustment
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+                mainContent.style.marginLeft = '0';
+            } else if (!sidebar.classList.contains('collapsed')) {
+                mainContent.style.marginLeft = '240px';
+            } else {
+                mainContent.style.marginLeft = '72px';
+            }
+        });
+    </script>
+</body>
+</html>

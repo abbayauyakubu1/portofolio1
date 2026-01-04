@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Clone - Responsive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --linkedin-blue: #0a66c2;
+            --linkedin-bg: #f3f2ef;
+            --linkedin-border: #e0e0e0;
+        }
+        body {
+            background-color: var(--linkedin-bg);
+            color: rgba(0,0,0,0.9);
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+            padding-bottom: 60px; /* Space for mobile nav */
+        }
+        @media (min-width: 768px) {
+            body { padding-bottom: 0; }
+        }
+        .nav-icon-container:hover { color: black; }
+        .sticky-side {
+            position: sticky;
+            top: 72px;
+        }
+    </style>
+</head>
+<body class="pt-14 md:pt-16">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 z-50 h-14 flex items-center px-4">
+        <div class="max-w-6xl w-full mx-auto flex items-center justify-between">
+            <!-- Left: Logo & Search -->
+            <div class="flex items-center gap-2 flex-grow md:flex-grow-0">
+                <i class="fa-brands fa-linkedin text-3xl md:text-4xl text-[#0a66c2]"></i>
+                <div class="relative flex-grow md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                    <input type="text" placeholder="Search" class="bg-[#edf3f8] pl-10 pr-4 py-1.5 rounded w-full text-sm focus:outline-none focus:ring-1 focus:ring-black">
+                </div>
+            </div>
+
+            <!-- Right: Nav Icons (Hidden on mobile, uses bottom bar) -->
+            <div class="hidden md:flex items-center gap-4 lg:gap-8 text-gray-500 text-[11px] font-normal">
+                <div class="flex flex-col items-center cursor-pointer text-black border-b-2 border-black h-14 justify-center pt-1 min-w-[50px]">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span>Home</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-black h-14 justify-center pt-1 min-w-[50px]">
+                    <i class="fa-solid fa-user-group text-xl"></i>
+                    <span>My Network</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-black h-14 justify-center pt-1 min-w-[50px]">
+                    <i class="fa-solid fa-briefcase text-xl"></i>
+                    <span>Jobs</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-black h-14 justify-center pt-1 min-w-[50px]">
+                    <i class="fa-solid fa-comment-dots text-xl"></i>
+                    <span>Messaging</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-black h-14 justify-center pt-1 min-w-[50px]">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                    <span>Notifications</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer hover:text-black h-14 justify-center pt-1 border-l border-gray-200 pl-4">
+                    <img src="https://i.pravatar.cc/150?u=me" class="w-6 h-6 rounded-full">
+                    <span class="flex items-center gap-1">Me <i class="fa-solid fa-caret-down"></i></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-50 h-14 flex items-center justify-around text-gray-500 text-[10px]">
+        <div class="flex flex-col items-center text-black">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span>Home</span>
+        </div>
+        <div class="flex flex-col items-center">
+            <i class="fa-solid fa-user-group text-lg"></i>
+            <span>Network</span>
+        </div>
+        <div class="flex flex-col items-center">
+            <i class="fa-solid fa-circle-plus text-3xl text-gray-400"></i>
+            <span>Post</span>
+        </div>
+        <div class="flex flex-col items-center">
+            <i class="fa-solid fa-bell text-lg"></i>
+            <span>Notifications</span>
+        </div>
+        <div class="flex flex-col items-center">
+            <i class="fa-solid fa-briefcase text-lg"></i>
+            <span>Jobs</span>
+        </div>
+    </nav>
+
+    <!-- Main Content Layout -->
+    <div class="max-w-6xl mx-auto px-0 sm:px-4 md:grid md:grid-cols-12 md:gap-6 mt-4 md:mt-6">
+        
+        <!-- Left Sidebar (Hidden on mobile) -->
+        <aside class="hidden md:block md:col-span-3">
+            <div class="sticky-side">
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <div class="h-14 bg-[#a0b4b7]"></div>
+                    <div class="px-3 pb-4 text-center">
+                        <img src="https://i.pravatar.cc/150?u=me" class="w-16 h-16 rounded-full border-2 border-white -mt-8 mx-auto mb-4 cursor-pointer">
+                        <h2 class="font-bold text-base hover:underline cursor-pointer">Abba Wdl Developer</h2>
+                        <p class="text-xs text-gray-500 mt-1">Full Stack Engineer | React & Node.js Enthusiast</p>
+                    </div>
+                    <div class="border-t border-gray-100 py-3 text-xs font-semibold">
+                        <div class="flex justify-between px-3 py-1 hover:bg-gray-100 cursor-pointer">
+                            <span class="text-gray-500 font-normal">Profile viewers</span>
+                            <span class="text-blue-600">124</span>
+                        </div>
+                        <div class="flex justify-between px-3 py-1 hover:bg-gray-100 cursor-pointer">
+                            <span class="text-gray-500 font-normal">Post impressions</span>
+                            <span class="text-blue-600">1,402</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-100 p-3 text-xs hover:bg-gray-100 cursor-pointer">
+                        <p class="text-gray-500 font-normal">Access exclusive tools & insights</p>
+                        <p class="font-bold flex items-center gap-1"><i class="fa-solid fa-square text-yellow-500"></i> Try Premium for free</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 mt-2 p-3 text-xs shadow-sm">
+                    <p class="text-blue-600 font-bold hover:underline cursor-pointer mb-2">Groups</p>
+                    <p class="text-blue-600 font-bold hover:underline cursor-pointer flex justify-between">Events <i class="fa-solid fa-plus text-gray-600"></i></p>
+                    <p class="text-blue-600 font-bold hover:underline cursor-pointer mt-2">Followed Hashtags</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Feed -->
+        <main class="col-span-12 md:col-span-9 lg:col-span-6 space-y-3">
+            <!-- Create Post Box -->
+            <div class="bg-white sm:rounded-lg border border-gray-200 p-3 shadow-sm">
+                <div class="flex gap-3 items-center mb-2">
+                    <img src="https://i.pravatar.cc/150?u=me" class="w-12 h-12 rounded-full">
+                    <button class="flex-1 text-left px-4 py-3 border border-gray-300 rounded-full text-gray-500 font-semibold text-sm hover:bg-gray-100 transition-colors">
+                        Start a post
+                    </button>
+                </div>
+                <div class="flex justify-between px-2 pt-2">
+                    <button class="flex items-center gap-2 p-2 hover:bg-gray-100 rounded text-xs sm:text-sm text-gray-500 font-semibold">
+                        <i class="fa-regular fa-image text-blue-400 text-lg"></i> Media
+                    </button>
+                    <button class="flex items-center gap-2 p-2 hover:bg-gray-100 rounded text-xs sm:text-sm text-gray-500 font-semibold">
+                        <i class="fa-solid fa-calendar-days text-orange-400 text-lg"></i> Event
+                    </button>
+                    <button class="flex items-center gap-2 p-2 hover:bg-gray-100 rounded text-xs sm:text-sm text-gray-500 font-semibold">
+                        <i class="fa-solid fa-newspaper text-red-400 text-lg"></i> Write article
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feed Sorting (Small padding on mobile) -->
+            <div class="flex items-center gap-2 py-1 px-4 sm:px-0">
+                <hr class="flex-1 border-gray-300">
+                <p class="text-[11px] text-gray-500">Sort by: <span class="text-black font-bold cursor-pointer">Top <i class="fa-solid fa-caret-down"></i></span></p>
+            </div>
+
+            <!-- Feed Content -->
+            <div id="posts-container" class="space-y-3">
+                <!-- Posts dynamic -->
+            </div>
+        </main>
+
+        <!-- Right Sidebar (Hidden on mobile and tablet) -->
+        <aside class="hidden lg:block lg:col-span-3">
+            <div class="sticky-side">
+                <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-base">LinkedIn News</h2>
+                        <i class="fa-solid fa-circle-info text-sm"></i>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="cursor-pointer group">
+                            <h3 class="text-sm font-bold group-hover:underline">AI jobs are on the rise</h3>
+                            <p class="text-xs text-gray-500">2d ago • 14,302 readers</p>
+                        </li>
+                        <li class="cursor-pointer group">
+                            <h3 class="text-sm font-bold group-hover:underline">Remote work trends 2024</h3>
+                            <p class="text-xs text-gray-500">1d ago • 8,122 readers</p>
+                        </li>
+                        <li class="cursor-pointer group">
+                            <h3 class="text-sm font-bold group-hover:underline">Tech layoffs: What's next?</h3>
+                            <p class="text-xs text-gray-500">3d ago • 25,901 readers</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-4 text-[11px] text-gray-500 flex flex-wrap justify-center gap-x-3 gap-y-1 px-4">
+                    <a href="#" class="hover:underline">About</a>
+                    <a href="#" class="hover:underline">Help Center</a>
+                    <a href="#" class="hover:underline">Privacy & Terms</a>
+                    <p class="w-full text-center mt-4">LinkedIn Corporation © 2024</p>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        const postsData = [
+            {
+                author: "Sarah Jenkins",
+                role: "Product Manager at Google",
+                time: "2h • Edited",
+                content: "Extremely excited to share that I've completed my certification in Advanced AI Product Management! 🚀",
+                image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+                likes: 452,
+                comments: 24
+            },
+            {
+                author: "Tech Insights Weekly",
+                role: "3,402,102 followers",
+                time: "5h",
+                content: "Is the era of the 9-to-5 officially over? Recent surveys suggest that 65% of developers prefer asynchronous communication. What do you think? 👇",
+                image: null,
+                likes: 1205,
+                comments: 480
+            }
+        ];
+
+        function createPost(post) {
+            return `
+                <div class="bg-white sm:rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-3">
+                    <div class="p-3 flex items-start justify-between">
+                        <div class="flex gap-2">
+                            <img src="https://i.pravatar.cc/150?u=${post.author}" class="w-12 h-12 rounded-full cursor-pointer">
+                            <div>
+                                <h4 class="text-sm font-bold hover:text-blue-600 hover:underline cursor-pointer">${post.author}</h4>
+                                <p class="text-[11px] text-gray-500 leading-tight">${post.role}</p>
+                                <p class="text-[11px] text-gray-500 flex items-center gap-1">${post.time} • <i class="fa-solid fa-earth-americas"></i></p>
+                            </div>
+                        </div>
+                        <button class="p-2 hover:bg-gray-100 rounded-full">
+                            <i class="fa-solid fa-ellipsis text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="px-3 pb-3 text-sm leading-relaxed">${post.content}</div>
+                    ${post.image ? `<img src="${post.image}" class="w-full object-cover max-h-96">` : ''}
+                    <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100">
+                        <span class="text-xs text-gray-500 hover:text-blue-600 cursor-pointer">👍❤️ ${post.likes}</span>
+                        <span class="text-xs text-gray-500 hover:text-blue-600 cursor-pointer">${post.comments} comments</span>
+                    </div>
+                    <div class="px-2 py-1 flex justify-between">
+                        <button class="flex-1 py-2 sm:py-3 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:bg-gray-100 rounded text-[10px] sm:text-sm text-gray-600 font-semibold">
+                            <i class="fa-regular fa-thumbs-up text-lg"></i> <span>Like</span>
+                        </button>
+                        <button class="flex-1 py-2 sm:py-3 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:bg-gray-100 rounded text-[10px] sm:text-sm text-gray-600 font-semibold">
+                            <i class="fa-regular fa-comment-dots text-lg"></i> <span>Comment</span>
+                        </button>
+                        <button class="flex-1 py-2 sm:py-3 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:bg-gray-100 rounded text-[10px] sm:text-sm text-gray-600 font-semibold">
+                            <i class="fa-solid fa-share-nodes text-lg"></i> <span>Share</span>
+                        </button>
+                        <button class="flex-1 py-2 sm:py-3 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:bg-gray-100 rounded text-[10px] sm:text-sm text-gray-600 font-semibold">
+                            <i class="fa-solid fa-paper-plane text-lg"></i> <span>Send</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        const container = document.getElementById('posts-container');
+        postsData.forEach(post => container.innerHTML += createPost(post));
+    </script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify - Web Player: Music for everyone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --spotify-black: #000000;
+            --spotify-dark: #121212;
+            --spotify-light: #181818;
+            --spotify-grey: #242424;
+            --spotify-green: #1db954;
+            --text-muted: #b3b3b3;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: white;
+            font-family: 'Figtree', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 12px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Layout Grid */
+        .app-layout {
+            display: grid;
+            grid-template-areas: 
+                "nav header"
+                "nav main"
+                "footer footer";
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: auto 1fr 90px;
+            height: 100vh;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .app-layout {
+                grid-template-columns: 72px 1fr;
+            }
+            .nav-text { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .app-layout {
+                grid-template-areas: 
+                    "main"
+                    "footer";
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 140px;
+                padding: 0;
+                gap: 0;
+            }
+            .sidebar { display: none; }
+            .mobile-nav { display: flex; }
+        }
+
+        /* Components */
+        .sidebar { grid-area: nav; }
+        .main-view { grid-area: main; overflow-y: auto; }
+        .player-bar { grid-area: footer; }
+
+        .card-container {
+            background: var(--spotify-light);
+            border-radius: 8px;
+            padding: 16px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card-container:hover {
+            background: var(--spotify-grey);
+        }
+
+        .play-btn-float {
+            position: absolute;
+            right: 20px;
+            bottom: 85px;
+            width: 48px;
+            height: 48px;
+            background: var(--spotify-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+        }
+
+        .card-container:hover .play-btn-float {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .progress-bar-bg {
+            height: 4px;
+            background: #4d4d4d;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            width: 30%;
+        }
+
+        .progress-bar-bg:hover .progress-bar-fill {
+            background: var(--spotify-green);
+        }
+
+        .now-playing-img {
+            transition: transform 0.2s;
+        }
+
+        .now-playing-img:active {
+            transform: scale(0.95);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(180deg, #222222 0%, #121212 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="custom-scroll">
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar flex flex-col gap-2">
+            <nav class="bg-[#121212] rounded-lg p-5 flex flex-col gap-5">
+                <a href="#" class="flex items-center gap-5 hover:text-white transition font-bold text-white">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span class="nav-text">Home</span>
+                </a>
+                <a href="#" class="flex items-center gap-5 text-[#b3b3b3] hover:text-white transition font-bold">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                    <span class="nav-text">Search</span>
+                </a>
+            </nav>
+
+            <div class="bg-[#121212] rounded-lg flex-1 flex flex-col overflow-hidden">
+                <div class="p-5 flex items-center justify-between text-[#b3b3b3]">
+                    <button class="flex items-center gap-3 hover:text-white transition font-bold">
+                        <i class="fa-solid fa-lines-leaning text-xl"></i>
+                        <span class="nav-text">Your Library</span>
+                    </button>
+                    <div class="flex gap-4 nav-text">
+                        <i class="fa-solid fa-plus hover:bg-zinc-800 p-1 rounded-full cursor-pointer transition"></i>
+                        <i class="fa-solid fa-arrow-right hover:bg-zinc-800 p-1 rounded-full cursor-pointer transition"></i>
+                    </div>
+                </div>
+                
+                <div class="px-5 pb-4 flex gap-2 nav-text">
+                    <span class="bg-zinc-800 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer hover:bg-zinc-700">Playlists</span>
+                    <span class="bg-zinc-800 px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer hover:bg-zinc-700">Artists</span>
+                </div>
+
+                <div class="flex-1 overflow-y-auto custom-scroll px-2" id="sidebar-items">
+                    <!-- Library Items Injected by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view bg-[#121212] rounded-lg relative custom-scroll" id="main-content">
+            <div class="gradient-bg" id="dynamic-gradient"></div>
+            
+            <!-- Sticky Header -->
+            <header class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 transition-colors duration-500" id="main-header">
+                <div class="flex gap-2">
+                    <button class="bg-black/40 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="bg-black/40 w-8 h-8 rounded-full flex items-center justify-center opacity-50"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="hidden md:block bg-white text-black font-bold text-sm px-4 py-1.5 rounded-full hover:scale-105 transition">Explore Premium</button>
+                    <button class="bg-black/60 p-1 rounded-full flex items-center gap-2 hover:bg-zinc-800">
+                        <div class="w-7 h-7 bg-purple-500 rounded-full flex items-center justify-center text-xs font-bold">M</div>
+                    </button>
+                </div>
+            </header>
+
+            <div class="px-6 py-2">
+                <h1 class="text-3xl font-bold mb-6">Good evening</h1>
+                
+                <!-- Hero Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <div class="flex items-center bg-white/10 hover:bg-white/20 transition rounded overflow-hidden cursor-pointer group">
+                        <img src="https://picsum.photos/seed/liked/80" class="w-12 sm:w-20 h-12 sm:h-20 shadow-xl">
+                        <span class="font-bold px-4">Liked Songs</span>
+                        <div class="ml-auto mr-4 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black opacity-0 group-hover:opacity-100 shadow-lg transition-all translate-y-1 group-hover:translate-y-0">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center bg-white/10 hover:bg-white/20 transition rounded overflow-hidden cursor-pointer group">
+                        <img src="https://picsum.photos/seed/daily/80" class="w-12 sm:w-20 h-12 sm:h-20 shadow-xl">
+                        <span class="font-bold px-4">Daily Mix 1</span>
+                        <div class="ml-auto mr-4 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black opacity-0 group-hover:opacity-100 shadow-lg transition-all translate-y-1 group-hover:translate-y-0">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center bg-white/10 hover:bg-white/20 transition rounded overflow-hidden cursor-pointer group">
+                        <img src="https://picsum.photos/seed/jazz/80" class="w-12 sm:w-20 h-12 sm:h-20 shadow-xl">
+                        <span class="font-bold px-4">Jazz Classics</span>
+                        <div class="ml-auto mr-4 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-black opacity-0 group-hover:opacity-100 shadow-lg transition-all translate-y-1 group-hover:translate-y-0">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Made For You -->
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold hover:underline cursor-pointer">Made For You</h2>
+                    <span class="text-sm font-bold text-[#b3b3b3] hover:underline cursor-pointer">Show all</span>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6" id="discover-grid">
+                    <!-- Cards Injected by JS -->
+                </div>
+
+                <!-- Section: Recently Played -->
+                <div class="flex items-center justify-between mt-10 mb-4">
+                    <h2 class="text-2xl font-bold hover:underline cursor-pointer">Recently Played</h2>
+                    <span class="text-sm font-bold text-[#b3b3b3] hover:underline cursor-pointer">Show all</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6" id="recent-grid">
+                    <!-- Cards Injected by JS -->
+                </div>
+            </div>
+
+            <div class="h-24"></div> <!-- Spacer for footer -->
+        </main>
+
+        <!-- Player Bar -->
+        <footer class="player-bar bg-black flex flex-col md:flex-row items-center justify-between px-4 z-[100]">
+            <!-- Now Playing -->
+            <div class="flex items-center gap-4 w-full md:w-[30%]">
+                <img id="p-img" src="https://picsum.photos/seed/nowplaying/60" class="w-14 h-14 rounded shadow-lg now-playing-img cursor-pointer">
+                <div class="flex flex-col min-w-0">
+                    <span id="p-title" class="text-sm font-medium hover:underline cursor-pointer truncate">Starboy</span>
+                    <span id="p-artist" class="text-[11px] text-[#b3b3b3] hover:underline cursor-pointer truncate">The Weeknd</span>
+                </div>
+                <button class="text-[#b3b3b3] hover:text-white ml-2"><i class="fa-regular fa-heart"></i></button>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="flex flex-col items-center w-full md:w-[40%] max-w-[600px] gap-2">
+                <div class="flex items-center gap-6">
+                    <i class="fa-solid fa-shuffle text-sm text-[#b3b3b3] hover:text-white cursor-pointer"></i>
+                    <i class="fa-solid fa-backward-step text-xl text-[#b3b3b3] hover:text-white cursor-pointer"></i>
+                    <button id="play-btn" class="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition">
+                        <i class="fa-solid fa-play ml-0.5"></i>
+                    </button>
+                    <i class="fa-solid fa-forward-step text-xl text-[#b3b3b3] hover:text-white cursor-pointer"></i>
+                    <i class="fa-solid fa-repeat text-sm text-[#b3b3b3] hover:text-white cursor-pointer"></i>
+                </div>
+                <div class="flex items-center gap-2 w-full text-[11px] text-[#b3b3b3]">
+                    <span id="curr-time">1:24</span>
+                    <div class="progress-bar-bg flex-1">
+                        <div class="progress-bar-fill" style="width: 42%;"></div>
+                    </div>
+                    <span>3:50</span>
+                </div>
+            </div>
+
+            <!-- Volume/Other -->
+            <div class="hidden md:flex items-center justify-end gap-3 w-[30%] text-[#b3b3b3]">
+                <i class="fa-solid fa-microphone-lines text-xs hover:text-white cursor-pointer"></i>
+                <i class="fa-solid fa-list-ul text-xs hover:text-white cursor-pointer"></i>
+                <i class="fa-solid fa-computer text-xs hover:text-white cursor-pointer"></i>
+                <div class="flex items-center gap-2 w-24">
+                    <i class="fa-solid fa-volume-high text-xs hover:text-white cursor-pointer"></i>
+                    <div class="progress-bar-bg flex-1">
+                        <div class="progress-bar-fill" style="width: 70%;"></div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-maximize text-xs hover:text-white cursor-pointer"></i>
+            </div>
+        </footer>
+
+        <!-- Mobile Nav Bar (Bottom) -->
+        <nav class="mobile-nav fixed bottom-0 left-0 right-0 h-16 bg-black/90 backdrop-blur-md border-t border-white/10 hidden items-center justify-around z-[110] md:hidden">
+            <div class="flex flex-col items-center gap-1 text-white">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px]">Home</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-[#b3b3b3]">
+                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                <span class="text-[10px]">Search</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-[#b3b3b3]">
+                <i class="fa-solid fa-lines-leaning text-lg"></i>
+                <span class="text-[10px]">Library</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-[#b3b3b3]">
+                <i class="fa-brands fa-spotify text-lg"></i>
+                <span class="text-[10px]">Premium</span>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        const MOCK_DATA = [
+            { id: 1, title: "After Hours", artist: "The Weeknd", img: "https://picsum.photos/seed/1/300" },
+            { id: 2, title: "Lo-Fi Beats", artist: "Chill Station", img: "https://picsum.photos/seed/2/300" },
+            { id: 3, title: "Daily Mix 1", artist: "Made for you", img: "https://picsum.photos/seed/3/300" },
+            { id: 4, title: "Rock Classics", artist: "Spotify", img: "https://picsum.photos/seed/4/300" },
+            { id: 5, title: "Deep Focus", artist: "Focus Flow", img: "https://picsum.photos/seed/5/300" },
+            { id: 6, title: "Top Hits 2024", artist: "Spotify", img: "https://picsum.photos/seed/6/300" },
+            { id: 7, title: "Night Rider", artist: "Synthwave", img: "https://picsum.photos/seed/7/300" },
+            { id: 8, title: "Jazz Vibes", artist: "Smooth Jazz", img: "https://picsum.photos/seed/8/300" },
+        ];
+
+        const LIBRARY_DATA = [
+            { name: "My Playlist #1", type: "Playlist", owner: "You", img: "https://picsum.photos/seed/9/50" },
+            { name: "Global Top 50", type: "Playlist", owner: "Spotify", img: "https://picsum.photos/seed/10/50" },
+            { name: "The Weeknd", type: "Artist", owner: "Artist", img: "https://picsum.photos/seed/11/50", circle: true },
+            { name: "Techno Bunker", type: "Playlist", owner: "Spotify", img: "https://picsum.photos/seed/12/50" },
+            { name: "Liked Songs", type: "Playlist", owner: "432 songs", img: "https://picsum.photos/seed/13/50" }
+        ];
+
+        function init() {
+            renderGrids();
+            renderLibrary();
+            setupScrollHeader();
+            setupPlayPause();
+        }
+
+        function renderGrids() {
+            const discoverGrid = document.getElementById('discover-grid');
+            const recentGrid = document.getElementById('recent-grid');
+            
+            MOCK_DATA.forEach(item => {
+                const card = createCard(item);
+                discoverGrid.appendChild(card);
+            });
+
+            MOCK_DATA.slice().reverse().forEach(item => {
+                const card = createCard(item);
+                recentGrid.appendChild(card);
+            });
+        }
+
+        function createCard(item) {
+            const div = document.createElement('div');
+            div.className = 'card-container group';
+            div.innerHTML = `
+                <div class="relative mb-4">
+                    <img src="${item.img}" class="w-full aspect-square object-cover rounded shadow-lg">
+                    <div class="play-btn-float shadow-2xl">
+                        <i class="fa-solid fa-play ml-1"></i>
+                    </div>
+                </div>
+                <h3 class="font-bold truncate text-base mb-1">${item.title}</h3>
+                <p class="text-sm text-[#b3b3b3] line-clamp-2">${item.artist}</p>
+            `;
+            div.onclick = () => playSong(item);
+            return div;
+        }
+
+        function renderLibrary() {
+            const container = document.getElementById('sidebar-items');
+            LIBRARY_DATA.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-2 hover:bg-[#1a1a1a] rounded-md cursor-pointer transition-colors';
+                div.innerHTML = `
+                    <img src="${item.img}" class="w-12 h-12 flex-shrink-0 object-cover ${item.circle ? 'rounded-full' : 'rounded'}">
+                    <div class="flex flex-col min-w-0 nav-text">
+                        <span class="text-sm font-semibold truncate text-white">${item.name}</span>
+                        <span class="text-[13px] text-[#b3b3b3]">${item.type} • ${item.owner}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function setupScrollHeader() {
+            const mainContent = document.getElementById('main-content');
+            const header = document.getElementById('main-header');
+            
+            mainContent.addEventListener('scroll', () => {
+                const scrollPos = mainContent.scrollTop;
+                const alpha = Math.min(scrollPos / 200, 0.9);
+                header.style.backgroundColor = `rgba(18, 18, 18, ${alpha})`;
+            });
+        }
+
+        let isPlaying = false;
+        function setupPlayPause() {
+            const btn = document.getElementById('play-btn');
+            btn.onclick = () => {
+                isPlaying = !isPlaying;
+                const icon = btn.querySelector('i');
+                icon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play ml-0.5';
+            };
+        }
+
+        function playSong(item) {
+            document.getElementById('p-title').innerText = item.title;
+            document.getElementById('p-artist').innerText = item.artist;
+            document.getElementById('p-img').src = item.img;
+            
+            isPlaying = true;
+            document.getElementById('play-btn').querySelector('i').className = 'fa-solid fa-pause';
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

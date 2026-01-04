@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Clone - Web Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --spotify-black: #000000;
+            --spotify-dark: #121212;
+            --spotify-grey: #242424;
+            --spotify-light-grey: #b3b3b3;
+            --spotify-green: #1db954;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: white;
+            font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5a5a5a;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--spotify-black);
+        }
+
+        .main-content {
+            background: linear-gradient(to bottom, #222222, var(--spotify-dark));
+            overflow-y: auto;
+            flex: 1;
+            border-radius: 8px;
+            margin: 8px 8px 8px 0;
+        }
+
+        .card {
+            background-color: #181818;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background-color: #282828;
+        }
+
+        .play-btn-card {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .card:hover .play-btn-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .player-bar {
+            height: 90px;
+            background-color: var(--spotify-black);
+            border-top: 1px solid #282828;
+        }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin: 0;
+                border-radius: 0;
+            }
+            .player-bar {
+                height: 80px;
+                padding: 0 10px;
+            }
+            .mobile-nav {
+                display: flex;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        .progress-bar {
+            height: 4px;
+            width: 100%;
+            background-color: #4d4d4d;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-filled {
+            height: 100%;
+            background-color: white;
+            width: 30%;
+            border-radius: 2px;
+        }
+
+        .progress-bar:hover .progress-filled {
+            background-color: var(--spotify-green);
+        }
+
+        .song-img {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar p-2 flex flex-col gap-2">
+            <div class="bg-[#121212] rounded-lg p-4 flex flex-col gap-4">
+                <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span class="font-bold">Home</span>
+                </div>
+                <div class="flex items-center gap-4 text-gray-300 hover:text-white cursor-pointer transition">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                    <span class="font-bold">Search</span>
+                </div>
+            </div>
+
+            <div class="bg-[#121212] rounded-lg flex-1 p-2 flex flex-col overflow-hidden">
+                <div class="flex items-center justify-between p-2 mb-2">
+                    <div class="flex items-center gap-2 text-gray-400 hover:text-white cursor-pointer transition">
+                        <i class="fa-solid fa-lines-leaning text-xl"></i>
+                        <span class="font-bold">Your Library</span>
+                    </div>
+                    <i class="fa-solid fa-plus text-gray-400 hover:text-white cursor-pointer"></i>
+                </div>
+                
+                <div class="overflow-y-auto pr-1">
+                    <!-- Library Items -->
+                    <div id="library-list" class="flex flex-col gap-2">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex flex-col relative">
+            <!-- Header -->
+            <header class="sticky top-0 z-20 flex items-center justify-between p-4 bg-transparent transition-colors duration-300" id="main-header">
+                <div class="flex gap-2">
+                    <button class="bg-black/50 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="bg-black/50 w-8 h-8 rounded-full flex items-center justify-center opacity-50 cursor-not-allowed"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="hidden md:block bg-white text-black font-bold py-1 px-4 rounded-full text-sm hover:scale-105 transition">Explore Premium</button>
+                    <button class="bg-black/50 p-1 rounded-full flex items-center gap-2 hover:bg-black/80 transition">
+                        <div class="w-7 h-7 bg-purple-600 rounded-full flex items-center justify-center text-xs">J</div>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Grid Content -->
+            <div class="p-6">
+                <h1 class="text-3xl font-bold mb-6">Good afternoon</h1>
+                
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <!-- Quick Access Cards -->
+                    <div class="bg-white/10 flex items-center gap-4 rounded overflow-hidden hover:bg-white/20 transition cursor-pointer group">
+                        <img src="https://picsum.photos/seed/liked/80" alt="Liked" class="w-16 h-16 shadow-lg">
+                        <span class="font-bold">Liked Songs</span>
+                        <div class="ml-auto mr-4 opacity-0 group-hover:opacity-100 transition shadow-lg">
+                            <button class="bg-green-500 text-black w-10 h-10 rounded-full flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 flex items-center gap-4 rounded overflow-hidden hover:bg-white/20 transition cursor-pointer group">
+                        <img src="https://picsum.photos/seed/daily/80" alt="Daily Mix" class="w-16 h-16 shadow-lg">
+                        <span class="font-bold">Daily Mix 1</span>
+                        <div class="ml-auto mr-4 opacity-0 group-hover:opacity-100 transition shadow-lg">
+                            <button class="bg-green-500 text-black w-10 h-10 rounded-full flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 flex items-center gap-4 rounded overflow-hidden hover:bg-white/20 transition cursor-pointer group">
+                        <img src="https://picsum.photos/seed/chill/80" alt="Chill" class="w-16 h-16 shadow-lg">
+                        <span class="font-bold">Chill Vibes</span>
+                        <div class="ml-auto mr-4 opacity-0 group-hover:opacity-100 transition shadow-lg">
+                            <button class="bg-green-500 text-black w-10 h-10 rounded-full flex items-center justify-center"><i class="fa-solid fa-play"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Made for You Section -->
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold hover:underline cursor-pointer">Made For You</h2>
+                    <span class="text-gray-400 font-bold text-sm hover:underline cursor-pointer">Show all</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6" id="playlist-grid">
+                    <!-- Cards injected by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Nav Bar (Phone Only) -->
+    <nav class="mobile-nav fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md flex justify-around items-center p-3 z-50 border-t border-white/10 md:hidden">
+        <div class="flex flex-col items-center gap-1 text-white">
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="text-[10px]">Home</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass text-xl"></i>
+            <span class="text-[10px]">Search</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-solid fa-lines-leaning text-xl"></i>
+            <span class="text-[10px]">Library</span>
+        </div>
+        <div class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-brands fa-spotify text-xl"></i>
+            <span class="text-[10px]">Premium</span>
+        </div>
+    </nav>
+
+    <!-- Player Bar -->
+    <footer class="player-bar flex items-center justify-between px-4 z-50">
+        <!-- Current Track -->
+        <div class="flex items-center gap-4 w-1/4 min-w-[180px]">
+            <img id="current-img" src="https://picsum.photos/seed/song/60" alt="Track" class="w-14 h-14 rounded-md shadow-lg">
+            <div class="overflow-hidden">
+                <div id="current-title" class="text-sm font-semibold truncate hover:underline cursor-pointer">Starboy</div>
+                <div id="current-artist" class="text-xs text-gray-400 truncate hover:underline cursor-pointer">The Weeknd</div>
+            </div>
+            <i class="fa-regular fa-heart text-gray-400 hover:text-white cursor-pointer ml-2"></i>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col items-center max-w-[40%] w-full">
+            <div class="flex items-center gap-6 mb-2">
+                <i class="fa-solid fa-shuffle text-gray-400 hover:text-green-500 cursor-pointer text-sm"></i>
+                <i class="fa-solid fa-backward-step text-gray-300 hover:text-white cursor-pointer text-xl"></i>
+                <div id="play-pause-btn" class="bg-white text-black w-8 h-8 rounded-full flex items-center justify-center hover:scale-105 cursor-pointer transition">
+                    <i class="fa-solid fa-play ml-1"></i>
+                </div>
+                <i class="fa-solid fa-forward-step text-gray-300 hover:text-white cursor-pointer text-xl"></i>
+                <i class="fa-solid fa-repeat text-gray-400 hover:text-green-500 cursor-pointer text-sm"></i>
+            </div>
+            <div class="flex items-center gap-2 w-full text-[11px] text-gray-400">
+                <span>1:24</span>
+                <div class="progress-bar group">
+                    <div class="progress-filled"></div>
+                    <div class="absolute w-3 h-3 bg-white rounded-full -top-1 left-[30%] opacity-0 group-hover:opacity-100 shadow-lg"></div>
+                </div>
+                <span>3:50</span>
+            </div>
+        </div>
+
+        <!-- Extra Controls -->
+        <div class="hidden md:flex items-center justify-end gap-3 w-1/4">
+            <i class="fa-solid fa-microphone text-xs text-gray-400 hover:text-white"></i>
+            <i class="fa-solid fa-list-ul text-xs text-gray-400 hover:text-white"></i>
+            <i class="fa-solid fa-computer text-xs text-gray-400 hover:text-white"></i>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-volume-high text-xs text-gray-400"></i>
+                <div class="w-24 h-1 bg-gray-600 rounded-full relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white w-2/3 hover:bg-green-500"></div>
+                </div>
+            </div>
+            <i class="fa-solid fa-maximize text-xs text-gray-400 hover:text-white"></i>
+        </div>
+    </footer>
+
+    <script>
+        const playlists = [
+            { title: "Peaceful Piano", desc: "Relax and indulge with beautiful piano pieces", img: "https://picsum.photos/seed/piano/200" },
+            { title: "Deep Focus", desc: "Keep calm and focus with ambient music", img: "https://picsum.photos/seed/focus/200" },
+            { title: "Instrumental Study", desc: "Focus with soft study music in the background", img: "https://picsum.photos/seed/study/200" },
+            { title: "Jazz Vibes", desc: "The original chill out music.", img: "https://picsum.photos/seed/jazz/200" },
+            { title: "Focus Flow", desc: "Uptempo instrumental hip hop beats", img: "https://picsum.photos/seed/flow/200" },
+            { title: "Workday Lounge", desc: "Lounge and chill out music for your workday", img: "https://picsum.photos/seed/work/200" }
+        ];
+
+        const libraryItems = [
+            { name: "My Playlist #1", type: "Playlist • User", img: "https://picsum.photos/seed/p1/50" },
+            { name: "Global Top 50", type: "Playlist • Spotify", img: "https://picsum.photos/seed/p2/50" },
+            { name: "Lo-Fi Beats", type: "Playlist • Relax", img: "https://picsum.photos/seed/p3/50" },
+            { name: "Techno Bunker", type: "Playlist • Night", img: "https://picsum.photos/seed/p4/50" },
+            { name: "Sleep", type: "Playlist • Wellness", img: "https://picsum.photos/seed/p5/50" },
+            { name: "Discover Weekly", type: "Playlist • Spotify", img: "https://picsum.photos/seed/p6/50" }
+        ];
+
+        function init() {
+            const grid = document.getElementById('playlist-grid');
+            const libList = document.getElementById('library-list');
+            const mainContent = document.querySelector('.main-content');
+            const header = document.getElementById('main-header');
+
+            // Render Playlist Grid
+            playlists.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "card p-4 rounded-lg flex flex-col gap-3 relative";
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${p.img}" alt="${p.title}" class="w-full aspect-square object-cover rounded shadow-2xl">
+                        <button class="play-btn-card absolute bottom-2 right-2 bg-green-500 text-black w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95">
+                            <i class="fa-solid fa-play text-xl ml-1"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <h3 class="font-bold truncate">${p.title}</h3>
+                        <p class="text-sm text-gray-400 line-clamp-2">${p.desc}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => updateCurrentTrack(p.title, "Various Artists", p.img));
+                grid.appendChild(card);
+            });
+
+            // Render Library
+            libraryItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-3 p-2 hover:bg-[#1a1a1a] rounded-md cursor-pointer transition group";
+                div.innerHTML = `
+                    <img src="${item.img}" class="w-12 h-12 rounded flex-shrink-0">
+                    <div class="overflow-hidden">
+                        <div class="text-sm font-semibold truncate text-white">${item.name}</div>
+                        <div class="text-xs text-gray-400 truncate">${item.type}</div>
+                    </div>
+                `;
+                libList.appendChild(div);
+            });
+
+            // Header Background Effect
+            mainContent.addEventListener('scroll', () => {
+                const scroll = mainContent.scrollTop;
+                const opacity = Math.min(scroll / 200, 1);
+                header.style.backgroundColor = `rgba(18, 18, 18, ${opacity})`;
+            });
+
+            // Play/Pause Toggle
+            const playBtn = document.getElementById('play-pause-btn');
+            let isPlaying = false;
+            playBtn.addEventListener('click', () => {
+                isPlaying = !isPlaying;
+                const icon = playBtn.querySelector('i');
+                if (isPlaying) {
+                    icon.className = 'fa-solid fa-pause';
+                } else {
+                    icon.className = 'fa-solid fa-play ml-1';
+                }
+            });
+        }
+
+        function updateCurrentTrack(title, artist, img) {
+            document.getElementById('current-title').textContent = title;
+            document.getElementById('current-artist').textContent = artist;
+            document.getElementById('current-img').src = img;
+            
+            // Animation for change
+            const playerImg = document.getElementById('current-img');
+            playerImg.classList.add('scale-110');
+            setTimeout(() => playerImg.classList.remove('scale-110'), 200);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

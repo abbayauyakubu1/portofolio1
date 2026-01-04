@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapchat Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --snap-yellow: #FFFC00;
+            --snap-blue: #00B9FF;
+            --snap-purple: #9B55FF;
+            --snap-green: #3DBC33;
+            --snap-red: #FF4B4B;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: white;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 300vw; /* 3 screens: Chat, Camera, Discover */
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* Nav Indicators */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5));
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item.active {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Camera Screen Styling */
+        .camera-ui {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.3) 100%);
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .shutter-btn {
+            width: 80px;
+            height: 80px;
+            border: 6px solid white;
+            border-radius: 50%;
+            pointer-events: auto;
+        }
+
+        /* Story Circles */
+        .story-ring {
+            padding: 2px;
+            border: 2px solid var(--snap-purple);
+            border-radius: 50%;
+        }
+
+        /* Scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Desktop Adjustments */
+        @media (min-width: 1024px) {
+            .app-container {
+                width: 100vw;
+                transform: none !important;
+            }
+            .screen {
+                width: 33.33vw;
+                border-right: 1px solid #222;
+            }
+            .bottom-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-wrapper" class="app-container">
+        
+        <!-- SECTION 1: CHAT -->
+        <section class="screen bg-white text-black">
+            <header class="sticky top-0 bg-white p-4 flex items-center justify-between z-10 border-b">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-user text-gray-500"></i>
+                    </div>
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 bg-gray-100 p-2 rounded-full"></i>
+                </div>
+                <h1 class="font-bold text-xl">Chat</h1>
+                <div class="flex gap-4 items-center">
+                    <i class="fa-solid fa-user-plus text-gray-400"></i>
+                    <i class="fa-solid fa-message text-gray-400"></i>
+                </div>
+            </header>
+            
+            <div id="chat-list" class="pb-20">
+                <!-- Chat items injected via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: CAMERA -->
+        <section class="screen bg-zinc-900 overflow-hidden">
+            <!-- Simulated Camera Background -->
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&q=80'); filter: brightness(0.8);"></div>
+            
+            <div class="camera-ui absolute inset-0 flex flex-col justify-between p-6">
+                <div class="flex justify-between items-start pointer-events-auto">
+                    <div class="flex flex-col gap-6">
+                        <div class="w-10 h-10 bg-black/30 rounded-full flex items-center justify-center"><i class="fa-solid fa-user"></i></div>
+                        <div class="w-10 h-10 bg-black/30 rounded-full flex items-center justify-center"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    </div>
+                    <div class="flex flex-col gap-5 bg-black/20 p-2 rounded-full backdrop-blur-md">
+                        <i class="fa-solid fa-repeat p-2"></i>
+                        <i class="fa-solid fa-bolt p-2"></i>
+                        <i class="fa-solid fa-moon p-2"></i>
+                        <i class="fa-solid fa-music p-2"></i>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-8 pointer-events-auto pb-20">
+                    <div class="flex gap-6 items-center">
+                        <i class="fa-regular fa-face-smile text-3xl"></i>
+                        <div class="shutter-btn active:scale-90 transition-transform cursor-pointer"></div>
+                        <i class="fa-solid fa-images text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: STORIES / DISCOVER -->
+        <section class="screen bg-white text-black">
+            <header class="sticky top-0 bg-white p-4 flex items-center justify-between z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-user text-gray-500"></i>
+                    </div>
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 bg-gray-100 p-2 rounded-full"></i>
+                </div>
+                <h1 class="font-bold text-xl">Stories</h1>
+                <i class="fa-solid fa-ellipsis text-gray-400"></i>
+            </header>
+
+            <div class="p-4">
+                <h2 class="font-bold mb-3">Friends</h2>
+                <div class="flex gap-4 overflow-x-auto no-scrollbar mb-8">
+                    <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                        <div class="story-ring"><img src="https://i.pravatar.cc/150?u=1" class="w-14 h-14 rounded-full"></div>
+                        <span class="text-xs">Add Story</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                        <div class="story-ring"><img src="https://i.pravatar.cc/150?u=2" class="w-14 h-14 rounded-full"></div>
+                        <span class="text-xs">Alex</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                        <div class="story-ring"><img src="https://i.pravatar.cc/150?u=3" class="w-14 h-14 rounded-full"></div>
+                        <span class="text-xs">Jordan</span>
+                    </div>
+                </div>
+
+                <h2 class="font-bold mb-3">Discover</h2>
+                <div class="grid grid-cols-2 gap-3 pb-24">
+                    <div class="relative h-64 rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=400" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <p class="absolute bottom-3 left-3 text-white font-bold text-sm">Tech Daily</p>
+                    </div>
+                    <div class="relative h-64 rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <p class="absolute bottom-3 left-3 text-white font-bold text-sm">Foodie Hub</p>
+                    </div>
+                    <div class="relative h-64 rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <p class="absolute bottom-3 left-3 text-white font-bold text-sm">Travelers</p>
+                    </div>
+                    <div class="relative h-64 rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <p class="absolute bottom-3 left-3 text-white font-bold text-sm">Music News</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <div onclick="goToScreen(0)" class="nav-item" id="nav-0">
+            <i class="fa-solid fa-location-dot text-2xl"></i>
+        </div>
+        <div onclick="goToScreen(0)" class="nav-item" id="nav-1">
+            <i class="fa-solid fa-comment text-2xl"></i>
+        </div>
+        <div onclick="goToScreen(1)" class="nav-item active" id="nav-2">
+            <i class="fa-solid fa-camera text-4xl"></i>
+        </div>
+        <div onclick="goToScreen(2)" class="nav-item" id="nav-3">
+            <i class="fa-solid fa-user-group text-2xl"></i>
+        </div>
+        <div onclick="goToScreen(2)" class="nav-item" id="nav-4">
+            <i class="fa-solid fa-play text-2xl"></i>
+        </div>
+    </nav>
+
+    <script>
+        const MOCK_CHATS = [
+            { name: "Sarah Miller", status: "New Snap", time: "2m", color: "var(--snap-red)", icon: "square" },
+            { name: "Best Friends Group", status: "Opened", time: "15m", color: "var(--snap-blue)", icon: "play" },
+            { name: "John Doe", status: "Received", time: "1h", color: "var(--snap-purple)", icon: "square" },
+            { name: "Alex Rivers", status: "New Chat", time: "3h", color: "var(--snap-blue)", icon: "message" },
+            { name: "Snapchat Team", status: "Opened", time: "1d", color: "var(--snap-purple)", icon: "play" },
+            { name: "Emily Watson", status: "New Snap", time: "2d", color: "var(--snap-red)", icon: "square" },
+            { name: "Mike Ross", status: "Opened", time: "3d", color: "var(--snap-blue)", icon: "play" },
+            { name: "Rachel Green", status: "Received", time: "1w", color: "var(--snap-purple)", icon: "square" }
+        ];
+
+        function renderChats() {
+            const list = document.getElementById('chat-list');
+            list.innerHTML = MOCK_CHATS.map(chat => `
+                <div class="flex items-center justify-between p-4 border-b border-gray-100 active:bg-gray-50 cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center border">
+                            <i class="fa-solid fa-user text-gray-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base">${chat.name}</h3>
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-${chat.icon === 'square' ? 'square' : (chat.icon === 'play' ? 'play' : 'comment')} text-[10px]" style="color: ${chat.color}"></i>
+                                <span class="text-xs font-medium text-gray-500">${chat.status} • ${chat.time}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xl">🔥</span>
+                        <div class="w-px h-6 bg-gray-200"></div>
+                        <i class="fa-solid fa-camera text-gray-300"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function goToScreen(index) {
+            const wrapper = document.getElementById('main-wrapper');
+            // Mobile navigation logic (horizontal scroll)
+            if (window.innerWidth < 1024) {
+                wrapper.style.transform = `translateX(-${index * 100}vw)`;
+                
+                // Update nav highlights
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                // Map the 3 screens to the 5 nav buttons
+                if(index === 0) document.getElementById('nav-1').classList.add('active');
+                if(index === 1) document.getElementById('nav-2').classList.add('active');
+                if(index === 2) document.getElementById('nav-3').classList.add('active');
+            }
+        }
+
+        // Initialize
+        renderChats();
+        
+        // Start on Camera screen for mobile
+        if(window.innerWidth < 1024) {
+            goToScreen(1);
+        }
+
+        // Handle desktop resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('main-wrapper').style.transform = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

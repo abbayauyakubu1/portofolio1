@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Clone - Responsive UI</title>
+    <!-- Load Tailwind CSS -->
+     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-y: scroll; /* Always show scrollbar to prevent layout jump */
+        }
+        /* Custom scrollbar style for dark mode */
+        body::-webkit-scrollbar {
+            width: 8px;
+        }
+        body::-webkit-scrollbar-thumb {
+            background-color: #383838;
+            border-radius: 4px;
+        }
+        
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'x-blue': '#1DA1F2',
+                        'x-dark': '#15202B',
+                        'x-gray-light': '#8899A6',
+                        'x-hover': 'rgba(29, 161, 242, 0.1)',
+                        'x-border': '#2F3336',
+                        'x-bg-card': '#1E2732',
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-black text-white min-h-screen">
+
+    <!-- Wrapper for the main layout grid -->
+    <div class="max-w-[1400px] mx-auto flex justify-center">
+
+        <!-- 1. Left Sidebar (Navigation) -->
+        <aside id="left-sidebar" class="hidden sm:block lg:w-[250px] xl:w-[280px] p-4 sticky top-0 h-screen overflow-y-auto">
+            <nav class="flex flex-col space-y-2 pt-2">
+                <!-- X Logo -->
+                <a href="#" class="p-3 mb-2 rounded-full w-fit hover:bg-x-hover transition-colors">
+                    <!-- Simple SVG X Logo Placeholder -->
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="w-7 h-7 fill-white"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.814L4.99 21.75H1.68l7.108-8.102L1.633 2.25h3.33l4.794 6.316 5.305-6.317zm-2.029 15.4L13.116 11.2l-4.707 5.927H4.99L13.793 4.25h2.812l-5.71 7.153L18.244 17.65h-2.029z"></path></g></svg>
+                </a>
+                <!-- Navigation Links -->
+                <a href="#" class="nav-item">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="hidden xl:inline ml-4 font-bold">Home</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span class="hidden xl:inline ml-4">Explore</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="hidden xl:inline ml-4">Notifications</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span class="hidden xl:inline ml-4">Messages</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="hidden xl:inline ml-4">Profile</span>
+                </a>
+
+                <!-- Post Button (Large) -->
+                <button onclick="document.getElementById('postModal').classList.remove('hidden')" class="bg-x-blue text-white font-bold py-3 mt-4 rounded-full w-full hidden xl:block hover:bg-blue-600 transition-colors">
+                    Post
+                </button>
+            </nav>
+
+            <!-- User Profile Button at the bottom -->
+            <div class="absolute bottom-4 w-full xl:w-[240px]">
+                <button class="flex items-center w-full p-2 rounded-full hover:bg-x-hover transition-colors">
+                    <img src="https://placehold.co/40x40/1DA1F2/ffffff?text=U" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1DA1F2/ffffff?text=U'" alt="User Avatar" class="w-10 h-10 rounded-full mr-3">
+                    <div class="hidden xl:block text-left">
+                        <p class="font-bold leading-tight">Abbayauyakubu</p>
+                        <p class="text-x-gray-light leading-tight">Abbayauyakubu@</p>
+                    </div>
+                    <!-- Ellipsis/More Icon -->
+                    <svg class="w-5 h-5 ml-auto hidden xl:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 2. Main Content Feed (Timeline) -->
+        <main id="main-feed" class="w-full sm:max-w-[600px] border-x border-x-border min-h-screen pb-16 sm:pb-0">
+
+            <!-- Sticky Header -->
+            <header class="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-x-border p-4">
+                <h1 class="text-xl font-bold">Home</h1>
+            </header>
+
+            <!-- Post Composer Section -->
+            <div class="flex p-4 border-b border-x-border">
+                <img src="https://placehold.co/48x48/1DA1F2/ffffff?text=U" onerror="this.onerror=null;this.src='https://placehold.co/48x48/1DA1F2/ffffff?text=U'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                <div class="flex-1">
+                    <textarea id="post-input" placeholder="What is happening?!" rows="2" class="w-full bg-transparent resize-none text-xl placeholder-x-gray-light focus:outline-none"></textarea>
+                    <div class="flex justify-end items-center mt-2">
+                        <!-- Placeholder for attachment icons (optional) -->
+                        <div class="flex space-x-2 text-x-blue">
+                            <!-- Image Icon -->
+                            <svg class="w-5 h-5 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <!-- GIF Icon -->
+                            <span class="font-bold text-lg cursor-pointer">GIF</span>
+                        </div>
+                        <button onclick="handlePost()" class="ml-4 bg-x-blue text-white font-bold py-2 px-4 rounded-full disabled:opacity-50 transition-colors">
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline/Feed -->
+            <div id="timeline">
+                <!-- Example Post 1 -->
+                <article class="p-4 border-b border-x-border hover:bg-x-dark/50 transition-colors cursor-pointer">
+                    <div class="flex">
+                        <img src="https://placehold.co/48x48/F43F5E/ffffff?text=JS" onerror="this.onerror=null;this.src='https://placehold.co/48x48/F43F5E/ffffff?text=JS'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-bold mr-1">JavaScript News</span>
+                                <span class="text-x-gray-light mr-1">@js_updates</span>
+                                <span class="text-x-gray-light">· 2h</span>
+                            </div>
+                            <p class="mt-1">The new ECMAScript features are dropping soon! Get ready for native signals support. This is going to change state management paradigms forever. 🚀 #JavaScript #ES2025</p>
+                            <!-- Action buttons -->
+                            <div class="flex justify-between mt-3 text-x-gray-light">
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span>42</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span>21</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span>105</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                 <!-- Timeline/Feed -->
+            <div id="timeline">
+                <!-- Example Post 1 -->
+                <article class="p-4 border-b border-x-border hover:bg-x-dark/50 transition-colors cursor-pointer">
+                    <div class="flex">
+                        <img src="https://placehold.co/48x48/F43F5E/ffffff?text=JS" onerror="this.onerror=null;this.src='https://placehold.co/48x48/F43F5E/ffffff?text=JS'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-bold mr-1">JavaScript News</span>
+                                <span class="text-x-gray-light mr-1">@js_updates</span>
+                                <span class="text-x-gray-light">· 3h</span>
+                            </div>
+                            <p class="mt-1">The new ECMAScript features are dropping soon! Get ready for native signals support. This is going to change state management paradigms forever. 🚀 #JavaScript #ES2025</p>
+                            <!-- Action buttons -->
+                            <div class="flex justify-between mt-3 text-x-gray-light">
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span>65</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span>213</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span>1050</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Example Post 2 (User-generated content will be inserted here) -->
+                <article class="p-4 border-b border-x-border hover:bg-x-dark/50 transition-colors cursor-pointer">
+                    <div class="flex">
+                        <img src="https://placehold.co/48x48/6366F1/ffffff?text=DE" onerror="this.onerror=null;this.src='https://placehold.co/48x48/6366F1/ffffff?text=DE'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-bold mr-1">Design Enthusiast</span>
+                                <span class="text-x-gray-light mr-1">@design_daily</span>
+                                <span class="text-x-gray-light">· 6h</span>
+                            </div>
+                            <p class="mt-1">Adaptive layouts shouldn't be an afterthought. Start with mobile first, and progressively enhance for tablets and desktops. That's the key to truly responsive design. #UIUX #ResponsiveDesign</p>
+                            <div class="bg-x-bg-card border border-x-border rounded-xl mt-3 overflow-hidden">
+                                <img src="https://placehold.co/500x200/2F3336/ffffff?text=Adaptive+Layout+Concept" alt="Placeholder image for a responsive design concept" class="w-full h-auto object-cover">
+                                <div class="p-3">
+                                    <p class="font-bold text-sm">Responsive Design Best Practices</p>
+                                    <p class="text-x-gray-light text-xs">A comprehensive guide to mobile-first development.</p>
+                                </div>
+                            </div>
+                            <!-- Action buttons -->
+                            <div class="flex justify-between mt-3 text-x-gray-light">
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span>100</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span>55</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span>230</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <!-- End of Example Posts -->
+            </div>
+
+            <article class="p-4 border-b border-x-border hover:bg-x-dark/50 transition-colors cursor-pointer">
+                    <div class="flex">
+                        <img src="data:image/jpeg;base64,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" onerror="this.onerror=null;this.src='https://placehold.co/48x48/6366F1/ffffff?text=DE'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-bold mr-1">Design Enthusiast</span>
+                                <span class="text-x-gray-light mr-1">@design_daily</span>
+                                <span class="text-x-gray-light">· 4h</span>
+                            </div>
+                            <p class="mt-1">Adaptive layouts shouldn't be an afterthought. Start with mobile first, and progressively enhance for tablets and desktops. That's the key to truly responsive design. #UIUX #ResponsiveDesign</p>
+                            <div class="bg-x-bg-card border border-x-border rounded-xl mt-3 overflow-hidden">
+                                <img src="data:image/jpeg;base64,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" alt="Placeholder image for a responsive design concept" class="w-full h-auto object-cover">
+                                <div class="p-3">
+                                    <p class="font-bold text-sm">Responsive Design Best Practices</p>
+                                    <p class="text-x-gray-light text-xs">A comprehensive guide to mobile-first development.</p>
+                                </div>
+                                 </div>
+                            <!-- Action buttons -->
+                            <div class="flex justify-between mt-3 text-x-gray-light">
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                    <span>120</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    <span>66</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span>2000</span>
+                                </div>
+                                <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Mobile Only: Floating Post Button -->
+            <button onclick="document.getElementById('postModal').classList.remove('hidden')" class="sm:hidden fixed bottom-[60px] right-4 bg-x-blue text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-20">
+                <!-- Plus Icon -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            </button>
+
+        </main>
+
+        <!-- 3. Right Sidebar (Trends) -->
+        <aside id="right-sidebar" class="hidden md:block w-[300px] xl:w-[350px] p-4 sticky top-0 h-screen overflow-y-auto">
+
+            <!-- Search Bar -->
+            <div class="sticky top-0 bg-black py-1 z-10">
+                <div class="relative">
+                    <input type="text" placeholder="Search" class="w-full bg-x-bg-card text-white py-2 pl-10 pr-4 rounded-full focus:outline-none focus:ring-1 focus:ring-x-blue">
+                    <!-- Search Icon -->
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-x-gray-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+
+            <!-- What's Happening (Trends) -->
+            <div class="mt-4 bg-x-bg-card rounded-xl overflow-hidden">
+                <h2 class="text-xl font-bold p-3 border-b border-x-border">What's Happening</h2>
+                <!-- Trend Item 1 -->
+                <div class="p-3 hover:bg-x-dark/50 cursor-pointer transition-colors border-b border-x-border last:border-b-0">
+                    <p class="text-x-gray-light text-sm">Trending in Technology</p>
+                    <p class="font-bold">#Web3Launch</p>
+                    <p class="text-x-gray-light text-sm">1.5M Posts</p>
+                </div>
+                <!-- Trend Item 2 -->
+                <div class="p-3 hover:bg-x-dark/50 cursor-pointer transition-colors border-b border-x-border last:border-b-0">
+                    <p class="text-x-gray-light text-sm">Sports · Trending</p>
+                    <p class="font-bold">Golden State Warriors</p>
+                    <p class="text-x-gray-light text-sm">345K Posts</p>
+                </div>
+                <!-- Trend Item 3 -->
+                <div class="p-3 hover:bg-x-dark/50 cursor-pointer transition-colors">
+                    <p class="text-x-gray-light text-sm">Trending</p>
+                    <p class="font-bold">#FrontendFriday</p>
+                    <p class="text-x-gray-light text-sm">88.9K Posts</p>
+                </div>
+                <button class="text-x-blue w-full text-left p-3 hover:bg-x-dark/50">Show more</button>
+            </div>
+
+            <!-- Who to Follow -->
+            <div class="mt-4 bg-x-bg-card rounded-xl overflow-hidden">
+                <h2 class="text-xl font-bold p-3 border-b border-x-border">Who to follow</h2>
+                <!-- Follow Item 1 -->
+                <div class="p-3 flex items-center justify-between hover:bg-x-dark/50 cursor-pointer transition-colors border-b border-x-border last:border-b-0">
+                    <div class="flex items-center">
+                        <img src="https://placehold.co/40x40/3B82F6/ffffff?text=C" onerror="this.onerror=null;this.src='https://placehold.co/40x40/3B82F6/ffffff?text=C'" alt="User Avatar" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <p class="font-bold leading-tight">Code Architect</p>
+                            <p class="text-x-gray-light leading-tight">@code_arch</p>
+                        </div>
+                    </div>
+                    <button class="bg-white text-black font-bold text-sm py-1.5 px-4 rounded-full">Follow</button>
+                </div>
+                <!-- Follow Item 2 -->
+                <div class="p-3 flex items-center justify-between hover:bg-x-dark/50 cursor-pointer">
+                    <div class="flex items-center">
+                        <img src="https://placehold.co/40x40/059669/ffffff?text=A" onerror="this.onerror=null;this.src='https://placehold.co/40x40/059669/ffffff?text=A'" alt="User Avatar" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <p class="font-bold leading-tight">AI Insights</p>
+                            <p class="text-x-gray-light leading-tight">@ai_insights</p>
+                        </div>
+                    </div>
+                    <button class="bg-white text-black font-bold text-sm py-1.5 px-4 rounded-full">Follow</button>
+                </div>
+                <button class="text-x-blue w-full text-left p-3 hover:bg-x-dark/50">Show more</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mobile Navigation Bar (Fixed at the bottom on small screens) -->
+    <nav class="fixed bottom-0 left-0 right-0 h-14 bg-black border-t border-x-border flex justify-around items-center sm:hidden z-20">
+        <a href="#" class="p-2 text-x-blue">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.24l-9 9V21h6v-6h6v6h6V11.24l-9-9z"></path></svg>
+        </a>
+        <a href="#" class="p-2 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </a>
+        <a href="#" class="p-2 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></path></svg>
+        </a>
+        <a href="#" class="p-2 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        </a>
+    </nav>
+
+
+    <!-- Post Creation Modal -->
+    <div id="postModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-start pt-10 z-50" onclick="if(event.target.id === 'postModal') closePostModal()">
+        <div class="bg-black w-full max-w-lg rounded-xl shadow-2xl border border-x-border">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-3 border-b border-x-border">
+                <button onclick="closePostModal()" class="p-1 rounded-full hover:bg-x-dark/50 transition-colors">
+                    <!-- Close Icon (X) -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h3 class="text-lg font-bold">Compose Post</h3>
+                <div></div> 
+            </div>
+
+            <!-- Modal Body (Composer) -->
+            <div class="flex p-4">
+                <img src="https://placehold.co/48x48/1DA1F2/ffffff?text=U" onerror="this.onerror=null;this.src='https://placehold.co/48x48/1DA1F2/ffffff?text=U'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                <div class="flex-1">
+                    <textarea id="modal-post-input" placeholder="What is happening?!" rows="4" class="w-full bg-transparent resize-none text-xl placeholder-x-gray-light focus:outline-none"></textarea>
+                    <div class="flex justify-between items-center mt-4 border-t border-x-border pt-2">
+                        <!-- Placeholder for attachment icons (optional) -->
+                        <div class="flex space-x-4 text-x-blue">
+                            <svg class="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="font-bold text-lg cursor-pointer">GIF</span>
+                        </div>
+                        <button onclick="handlePostFromModal()" class="bg-x-blue text-white font-bold py-2 px-4 rounded-full disabled:opacity-50 transition-colors">
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Helper function to close the modal
+        function closePostModal() {
+            document.getElementById('postModal').classList.add('hidden');
+            document.getElementById('modal-post-input').value = '';
+        }
+
+        // Helper function to create a new post HTML element
+        function createPostElement(text) {
+            const date = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const newPost = document.createElement('article');
+            newPost.className = 'p-4 border-b border-x-border hover:bg-x-dark/50 transition-colors cursor-pointer';
+            newPost.innerHTML = `
+                <div class="flex">
+                    <img src="https://placehold.co/48x48/1DA1F2/ffffff?text=U" onerror="this.onerror=null;this.src='https://placehold.co/48x48/1DA1F2/ffffff?text=U'" alt="User Avatar" class="w-12 h-12 rounded-full mr-3">
+                    <div class="flex-1">
+                        <div class="flex items-center">
+                            <span class="font-bold mr-1">MyUser</span>
+                            <span class="text-x-gray-light mr-1">@myuserhandle</span>
+                            <span class="text-x-gray-light">· ${date}</span>
+                        </div>
+                        <p class="mt-1 whitespace-pre-wrap">${text}</p>
+                        <div class="flex justify-between mt-3 text-x-gray-light">
+                            <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                <span>0</span>
+                            </div>
+                            <div class="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <span>0</span>
+                            </div>
+                            <div class="flex items-center space-x-1 hover:text-red-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                <span>0</span>
+                            </div>
+                            <div class="flex items-center space-x-1 hover:text-x-blue transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return newPost;
+        }
+
+        // Function to handle post submission from the main composer
+        function handlePost() {
+            const input = document.getElementById('post-input');
+            const text = input.value.trim();
+
+            if (text) {
+                const timeline = document.getElementById('timeline');
+                const newPostElement = createPostElement(text);
+                // Insert the new post at the top of the timeline
+                timeline.prepend(newPostElement);
+                input.value = ''; // Clear the input
+            } else {
+                console.log("Post content cannot be empty.");
+            }
+        }
+
+        // Function to handle post submission from the modal
+        function handlePostFromModal() {
+            const input = document.getElementById('modal-post-input');
+            const text = input.value.trim();
+
+            if (text) {
+                const timeline = document.getElementById('timeline');
+                const newPostElement = createPostElement(text);
+                // Insert the new post at the top of the timeline
+                timeline.prepend(newPostElement);
+                closePostModal(); // Close the modal
+            } else {
+                console.log("Post content cannot be empty.");
+            }
+        }
+
+        // Add a class for all navigation items for consistent styling
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.className = 'flex items-center p-3 rounded-full w-fit hover:bg-x-hover transition-colors';
+            });
+        });
+    </script>
+</body>
+</html>
